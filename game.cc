@@ -1,7 +1,9 @@
 #include "game.h"
+
 #include <iostream>
 #include <memory>
 #include <vector>
+
 #include "cpputils/graphics/image.h"
 #include "cpputils/graphics/image_event.h"
 #include "game_element.h"
@@ -59,12 +61,12 @@ void Game::FilterIntersections() {
     }
   }
   for (int l = 0; l < brickShot_.size(); l++) {
-   if (brickShot_[l]->IntersectsWith(&player_)) {
-     player_.SetIsActive(false);
-     brickShot_[l]->SetIsActive(false);
-     lose_ = true;
-   }
- }
+    if (brickShot_[l]->IntersectsWith(&player_)) {
+      player_.SetIsActive(false);
+      brickShot_[l]->SetIsActive(false);
+      lose_ = true;
+    }
+  }
 }
 
 void Game::UpdateScreen() {
@@ -94,7 +96,7 @@ void Game::UpdateScreen() {
   }
 }
 
-void Game::OnMouseEvent(const graphics::MouseEvent& mouseObject) {
+void Game::OnMouseEvent(const graphics::MouseEvent &mouseObject) {
   if (mouseObject.GetMouseAction() == graphics::MouseAction::kPressed ||
       mouseObject.GetMouseAction() == graphics::MouseAction::kDragged) {
     std::unique_ptr<PlayerProjectile> bullet;
@@ -103,8 +105,9 @@ void Game::OnMouseEvent(const graphics::MouseEvent& mouseObject) {
     bullet->SetY(mouseObject.GetY());
     playerShot_.push_back(std::move(bullet));
   }
-  if (mouseObject.GetX() < screen_.GetWidth() && mouseObject.GetY() < screen_.GetHeight() &&
-      mouseObject.GetX() > 0 && mouseObject.GetY() > 0) {
+  if (mouseObject.GetX() < screen_.GetWidth() &&
+      mouseObject.GetY() < screen_.GetHeight() && mouseObject.GetX() > 0 &&
+      mouseObject.GetY() > 0) {
     player_.SetX(mouseObject.GetX() - player_.GetWidth() / 2);
     player_.SetY(mouseObject.GetY() - player_.GetHeight() / 2);
   }
