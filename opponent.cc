@@ -29,7 +29,7 @@ void Opponent::Draw(graphics::Image &brick) {
   }
 }
 
-void Opponent::Move(const graphics::Image& image) {
+void Opponent::Move(const graphics::Image &image) {
   SetX(GetX() + 2);
   SetY(GetY() + 2);
   if (IsOutOfBounds(image)) {
@@ -40,7 +40,6 @@ void Opponent::Move(const graphics::Image& image) {
     Draw(brickO_);
   }
 }
-
 
 void OpponentProjectile::Draw(graphics::Image &brickShot) {
   graphics::Image bShot(5, 5);
@@ -58,7 +57,7 @@ void OpponentProjectile::Draw(graphics::Image &brickShot) {
   }
 }
 
-void OpponentProjectile::Move(const graphics::Image& image) {
+void OpponentProjectile::Move(const graphics::Image &image) {
   SetY(GetY() + 3);
   SetX(GetX() + 3);
   if (IsOutOfBounds(image) == true) {
@@ -68,7 +67,6 @@ void OpponentProjectile::Move(const graphics::Image& image) {
     Draw(brickShoot);
   }
 }
-
 
 std::unique_ptr<OpponentProjectile> Opponent::LaunchProjectile() {
   rateCounter_ += 1;
