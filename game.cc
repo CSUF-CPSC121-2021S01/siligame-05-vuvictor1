@@ -1,10 +1,11 @@
 #include "game.h"
 
 #include <iostream>
-#include <string>
 #include <vector>
+#include <memory>
 
 #include "cpputils/graphics/image.h"
+#include "cpputils/graphics/image_event.h"
 #include "game_element.h"
 #include "opponent.h"
 #include "player.h"
@@ -24,23 +25,6 @@ void Game::Init() {
   screen_.AddMouseEventListener(*this);
   screen_.AddAnimationEventListener(*this);
 }
-void Game::UpdateScreen() {
-  screen_.DrawRectangle(0, 0, 800, 600, 255, 255, 255);
-  screen_.DrawText(10, 10, std::to_string(score_), 35, 0, 0, 0);
-  for (int i = 0; i < brick_.size(); i++) {
-    if (brick_[i]->GetIsActive() == true) brick_[i]->Draw(screen_);
-  }
-  for (int i = 0; i < brickShot_.size(); i++) {
-    if (brickShot_[i]->GetIsActive() == true) brickShot_[i]->Draw(screen_);
-  }
-  for (int i = 0; i < playerShot_.size(); i++) {
-    if (playerShot_[i]->GetIsActive() == true) playerShot_[i]->Draw(screen_);
-  }
-  if (player_.GetIsActive() == true) player_.Draw(screen_);
-  else screen_.DrawText(200, 200, "You lose", 125, 245, 70, 65);
-}
-
-void Game::Start() { screen_.ShowUntilClosed(); }
 
 void Game::MoveGameElements() {
   for (int i = 0; i < brick_.size(); i++) {
@@ -53,6 +37,8 @@ void Game::MoveGameElements() {
     playerShot_[p]->Move(screen_);
   }
 }
+
+void Game::Start() { screen_.ShowUntilClosed(); }
 
 void Game::FilterIntersections() {
   for (int i = 0; i < brick_.size(); i++) {
@@ -82,47 +68,65 @@ void Game::FilterIntersections() {
   }
 }
 
+void Game::UpdateScreen() {
+  screen_.DrawRectangle(0, 0, 800, 600, 255, 255, 255);
+  screen_.DrawText(10, 10, std::to_string(score_), 35, 0, 0, 0);
+  for (int i = 0; i < brick_.size(); i++) {
+    if (brick_[i]->GetIsActive() == true) brick_[i]->Draw(screen_);
+  }
+  for (int i = 0; i < brickShot_.size(); i++) {
+    if (brickShot_[i]->GetIsActive() == true) brickShot_[i]->Draw(screen_);
+  }
+  for (int i = 0; i < playerShot_.size(); i++) {
+    if (playerShot_[i]->GetIsActive() == true) playerShot_[i]->Draw(screen_);
+  }
+  if (player_.GetIsActive() == true) player_.Draw(screen_);
+  else screen_.DrawText(200, 200, "You lose", 125, 245, 70, 65);
+}
+
+
 void Game::OnAnimationStep() {
   if (brick_.size() == 0) CreateOpponents();
   MoveGameElements();
+  LaunchProjectiles();
   FilterIntersections();
-  UpdateScreen();
   RemoveInactive();
+  UpdateScreen();
   screen_.Flush();
 }
 
 void Game::OnMouseEvent(const graphics::MouseEvent &mouseObject) {
-  if (mouseObject.GetX() > 0 && mouseObject.GetY() > 0 &&
-      mouseObject.GetX() < screen_.GetWidth() &&
-      mouseObject.GetY() < screen_.GetHeight()) {
-    player_.SetX(mouseObject.GetX() - player_.GetWidth() / 2);
-    player_.SetY(mouseObject.GetY() - player_.GetHeight() / 2);
-  }
- if (mouseObject.GetMouseAction() == graphics::MouseAction::kPressed) {
-   std::unique_ptr<PlayerProjectile> Shooting =
-      std::make_unique<PlayerProjectile>(mouseObject.GetX(), mouseObject.GetY() + 25);
-      playerShot_.push_back(std::move(Shooting));
- }
- if (mouseObject.GetMouseAction() == graphics::MouseAction::kDragged) {
-   std::unique_ptr<PlayerProjectile> Shooting =
-       std::make_unique<PlayerProjectile>(mouseObject.GetX(), mouseObject.GetY() + 25);
-   playerShot_.push_back(std::move(Shooting));
- }
+  if (mouseObject.GetMouseAction() == graphics::MouseAction::kPressed ||
+        mouseObject.GetMouseAction() == graphics::MouseAction::kDragged) {
+      std::unique_ptr<PlayerProjectile> projectile;
+      projectile = std::make_unique<PlayerProjectile>();
+      projectile->SetX(mouseObject.GetX());
+      projectile->SetY(mouseObject.GetY());
+      playerShot_.push_back(std::move(projectile));
+    }
+    if (mouseObject.GetX() < screen_.GetWidth() && mouseObject.GetY() < screen_.GetHeight() &&
+        mouseObject.GetX() > 0 && mouseObject.GetY() > 0) {
+      player_.SetX(mouseObject.GetX() - player_.GetWidth() / 2);
+      player_.SetY(mouseObject.GetY() - player_.GetHeight() / 2);
+    }
 }
 void Game::RemoveInactive() {
-  for (int i = playerShot_.size() - 1; i >= 0; i--) {
-    if (!playerShot_[i]->GetIsActive()) {
-      playerShot_.erase(playerShot_.begin() + i);
-    }
-  }
-  for (int i = brickShot_.size() - 1; i >= 0; i--) {
-    if (!brickShot_[i]->GetIsActive()) {
-      brickShot_.erase(brickShot_.begin() + i);
-    }
-  }
-  for (int i = brick_.size() - 1; i >= 0; i--) {
-    if (!brick_[i]->GetIsActive()) {
+  for (int i = 0; i < brick_.size(); i++) {
+    if (brick_[i]->GetIsActive() == false) {
       brick_.erase(brick_.begin() + i);
+      i = i - 1;
+    }
+  }
+  for (int i = 0; i < brickShot_.size(); i++) {
+    if (brickShot_[i]->GetIsActive() == false) {
+      brickShot_.erase(brickShot_.begin() + i);
+      i = i - 1;
+    }
+  }
+  for (int i = 0; i < playerShot_.size(); i++) {
+    if (playerShot_[i]->GetIsActive() == false) {
+      playerShot_.erase(playerShot_.begin() + i);
+      i = i - 1;
     }
   }
 }

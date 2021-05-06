@@ -13,7 +13,7 @@ class Game : public graphics::AnimationEventListener,
              public graphics::MouseEventListener {
  public:
   Game() { screen_.Initialize(800, 600); }
-  Game(int width, int height) { screen_.Initialize(width, height); }
+  Game(int width, int height) : screen_(width, height) {}
 
   std::vector<std::unique_ptr<Opponent>> &GetOpponents() { return brick_; }
 
@@ -32,16 +32,14 @@ class Game : public graphics::AnimationEventListener,
   void Init();
   void UpdateScreen();
   void Start();
-
-  bool LoseCheck() { return lose_; }
-
   void MoveGameElements();
   void FilterIntersections();
   void LaunchProjectiles();
   void OnAnimationStep();
-
   void RemoveInactive();
 
+  int GetScore() {return score_; }
+  bool HasLost() { return lose_; }
   void OnMouseEvent(const graphics::MouseEvent &mouseObject);
 
  private:
@@ -53,6 +51,6 @@ class Game : public graphics::AnimationEventListener,
   int width_;
   int height_;
   int score_ = 0;
-  bool lose_ = false;
+  bool lose_;
 };
 #endif

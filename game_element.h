@@ -25,7 +25,7 @@ class GameElement {
   void SetIsActive(bool is_active) { is_active_ = is_active; }
 
   bool IntersectsWith(const GameElement *game);
-  bool IsOutOfBounds(const graphics::Image &image);
+  bool IsOutOfBounds(const graphics::Image &check);
 
  protected:
   int x_;

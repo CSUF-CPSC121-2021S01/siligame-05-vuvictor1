@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 
 #ifndef OPPONENT_H
 #define OPPONENT_H
@@ -14,7 +13,7 @@ class OpponentProjectile : public GameElement {
 
   void Draw(graphics::Image &brickShot) override;
 
-  void Move(const graphics::Image &image) override;
+  void Move(const graphics::Image &brickShot) override;
 };
 
 class Opponent : public GameElement {
@@ -24,7 +23,7 @@ class Opponent : public GameElement {
 
   void Draw(graphics::Image &brick) override;
 
-  void Move(const graphics::Image &image) override;
+  void Move(const graphics::Image &brick) override;
 
   std::unique_ptr<OpponentProjectile> LaunchProjectile();
 
