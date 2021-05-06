@@ -8,112 +8,91 @@
 #include "opponent.h"
 #include "player.h"
 
-std::vector<std::unique_ptr<Opponent>>& Game::GetOpponents() {
-  return brick_;
-}
-std::vector<std::unique_ptr<OpponentProjectile>>&
-Game::GetOpponentProjectiles() {
-  return brickShot_;
-}
-std::vector<std::unique_ptr<PlayerProjectile>>& Game::GetPlayerProjectiles() {
-  return playerShot_;
-}
-Player& Game::GetPlayer() { return player_; }
-graphics::Image& Game::GetGameScreen() { return screen_; }
-
 void Game::CreateOpponents() {
-  std::unique_ptr<Opponent> opponent;
-  srand((unsigned)time(0));
-  for (int i = 0; i < 3; i++) {
-    opponent = std::make_unique<Opponent>();
-    int x = rand() % 750;
-    int y = rand() % 550;
-    opponent->SetX(x);
-    opponent->SetY(y);
-    brick_.push_back(std::move(opponent));
+  std::unique_ptr<Opponent> bricks;
+  for (int i = 0; i < 2; i++) {
+    bricks = std::make_unique<Opponent>();
+    bricks->SetX(50 * i + 25);
+    bricks->SetY(50);
+    brick_.push_back(std::move(bricks));
   }
 }
 
 void Game::Init() {
-  srand((unsigned)time(0));
-  int x = rand() % 749;
-  int y = rand() % 549;
-  player_.SetX(x);
-  player_.SetY(y);
+  player_.SetX(500);
+  player_.SetY(500);
   screen_.AddMouseEventListener(*this);
   screen_.AddAnimationEventListener(*this);
 }
+
+void Game::Start() { screen_.ShowUntilClosed(); }
 
 void Game::MoveGameElements() {
   for (int i = 0; i < brick_.size(); i++) {
     brick_[i]->Move(screen_);
   }
-  for (int j = 0; j < brickShot_.size(); j++) {
-    brickShot_[j]->Move(screen_);
+  for (int k = 0; k < brickShot_.size(); k++) {
+    brickShot_[k]->Move(screen_);
   }
-  for (int k = 0; k < playerShot_.size(); k++) {
-    playerShot_[k]->Move(screen_);
+  for (int p = 0; p < playerShot_.size(); p++) {
+    playerShot_[p]->Move(screen_);
   }
 }
 
 void Game::FilterIntersections() {
   for (int i = 0; i < brick_.size(); i++) {
-    if (player_.IntersectsWith(brick_[i].get()) == true) {
+    if (player_.IntersectsWith(brick_[i].get())) {
       player_.SetIsActive(false);
       brick_[i]->SetIsActive(false);
-      lost_ = true;
+      lose_ = true;
     }
   }
-  for (int i = 0; i < playerShot_.size(); i++) {
+  for (int h = 0; h < playerShot_.size(); h++) {
     for (int j = 0; j < brick_.size(); j++) {
-      if (playerShot_[i]->IntersectsWith(brick_[j].get()) == true) {
-        playerShot_[i]->SetIsActive(false);
+      if (playerShot_[h]->IntersectsWith(brick_[j].get())) {
+        playerShot_[h]->SetIsActive(false);
         brick_[j]->SetIsActive(false);
-        if (player_.GetIsActive() == true) {
-          score_ = score_ + 1;
+        if (player_.GetIsActive()) {
+          score_ += 1;
         }
       }
     }
   }
-  for (int i = 0; i < brickShot_.size(); i++) {
-   if (brickShot_[i]->IntersectsWith(&player_)) {
+  for (int l = 0; l < brickShot_.size(); l++) {
+   if (brickShot_[l]->IntersectsWith(&player_)) {
      player_.SetIsActive(false);
-     brickShot_[i]->SetIsActive(false);
-     lost_ = true;
+     brickShot_[l]->SetIsActive(false);
+     lose_ = true;
    }
  }
 }
 
 void Game::UpdateScreen() {
-  string score = std::to_string(GetScore());
-  string text = "score: " + score;
+  std::string scoreUpdate = std::to_string(GetScore());
+  std::string text = "Score: " + scoreUpdate;
   screen_.DrawRectangle(0, 0, 800, 600, 255, 255, 255);
-  screen_.DrawText(0, 0, text, 50, 245, 69, 66);
+  screen_.DrawText(10, 10, std::to_string(score_), 35, 0, 0, 0);
   for (int i = 0; i < brick_.size(); i++) {
-    if (brick_[i]->GetIsActive() == true) {
+    if (brick_[i]->GetIsActive()) {
       brick_[i]->Draw(screen_);
     }
   }
   for (int j = 0; j < brickShot_.size(); j++) {
-    if (brickShot_[j]->GetIsActive() == true) {
+    if (brickShot_[j]->GetIsActive()) {
       brickShot_[j]->Draw(screen_);
     }
   }
   for (int k = 0; k < playerShot_.size(); k++) {
-    if (playerShot_[k]->GetIsActive() == true) {
+    if (playerShot_[k]->GetIsActive()) {
       playerShot_[k]->Draw(screen_);
     }
   }
-  if (player_.GetIsActive() == true) {
+  if (player_.GetIsActive()) {
     player_.Draw(screen_);
   } else {
-    screen_.DrawText(300, 300, "Game over", 100, 245, 69, 66);
+    screen_.DrawText(200, 200, "You lose", 125, 245, 70, 65);
   }
 }
-
-int Game::GetScore() { return score_; }
-
-bool Game::HasLost() { return lost_; }
 
 void Game::OnAnimationStep() {
   if (brick_.size() == 0) {
@@ -127,23 +106,21 @@ void Game::OnAnimationStep() {
   screen_.Flush();
 }
 
-void Game::OnMouseEvent(const graphics::MouseEvent& mouse) {
-  if (mouse.GetMouseAction() == graphics::MouseAction::kPressed ||
-      mouse.GetMouseAction() == graphics::MouseAction::kDragged) {
-    std::unique_ptr<PlayerProjectile> projectile;
-    projectile = std::make_unique<PlayerProjectile>();
-    projectile->SetX(mouse.GetX());
-    projectile->SetY(mouse.GetY());
-    playerShot_.push_back(std::move(projectile));
+void Game::OnMouseEvent(const graphics::MouseEvent& mouseObject) {
+  if (mouseObject.GetMouseAction() == graphics::MouseAction::kPressed ||
+      mouseObject.GetMouseAction() == graphics::MouseAction::kDragged) {
+    std::unique_ptr<PlayerProjectile> bullet;
+    bullet = std::make_unique<PlayerProjectile>();
+    bullet->SetX(mouseObject.GetX());
+    bullet->SetY(mouseObject.GetY());
+    playerShot_.push_back(std::move(bullet));
   }
-  if (mouse.GetX() < screen_.GetWidth() && mouse.GetY() < screen_.GetHeight() &&
-      mouse.GetX() > 0 && mouse.GetY() > 0) {
-    player_.SetX(mouse.GetX() - player_.GetWidth() / 2);
-    player_.SetY(mouse.GetY() - player_.GetHeight() / 2);
+  if (mouseObject.GetX() < screen_.GetWidth() && mouseObject.GetY() < screen_.GetHeight() &&
+      mouseObject.GetX() > 0 && mouseObject.GetY() > 0) {
+    player_.SetX(mouseObject.GetX() - player_.GetWidth() / 2);
+    player_.SetY(mouseObject.GetY() - player_.GetHeight() / 2);
   }
 }
-
-void Game::Start() { screen_.ShowUntilClosed(); }
 
 void Game::RemoveInactive() {
   for (int i = 0; i < brick_.size(); i++) {

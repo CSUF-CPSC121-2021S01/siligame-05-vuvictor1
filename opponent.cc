@@ -30,8 +30,8 @@ void Opponent::Draw(graphics::Image &brick) {
 }
 
 void Opponent::Move(const graphics::Image& image) {
-  SetX(GetX() + 1);
-  SetY(GetY() + 1);
+  SetX(GetX() + 2);
+  SetY(GetY() + 2);
   if (IsOutOfBounds(image)) {
     SetIsActive(false);
   } else {
@@ -59,8 +59,8 @@ void OpponentProjectile::Draw(graphics::Image &brickShot) {
 }
 
 void OpponentProjectile::Move(const graphics::Image& image) {
-  SetY(GetY() + 2);
-  SetX(GetX() + 2);
+  SetY(GetY() + 3);
+  SetX(GetX() + 3);
   if (IsOutOfBounds(image) == true) {
     SetIsActive(false);
   } else {
