@@ -3,7 +3,6 @@
 #include "cpputils/graphics/image.h"
 #include "game_element.h"
 
-
 class OpponentProjectile : public GameElement {
  public:
   OpponentProjectile() : OpponentProjectile(0, 0) {}
