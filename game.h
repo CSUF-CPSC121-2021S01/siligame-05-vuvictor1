@@ -21,7 +21,9 @@ class Game : public graphics::AnimationEventListener,
     return brickShot_;
   }
 
-  std::vector<std::unique_ptr<PlayerProjectile>> &GetPlayerProjectiles() { return playerShot_; }
+  std::vector<std::unique_ptr<PlayerProjectile>> &GetPlayerProjectiles() {
+    return playerShot_;
+  }
 
   Player &GetPlayer() { return player_; }
 
@@ -38,7 +40,7 @@ class Game : public graphics::AnimationEventListener,
   void RemoveInactive();
   void UpdateScreen();
 
-  int GetScore() {return score_; }
+  int GetScore() { return score_; }
   bool HasLost() { return lose_; }
   void OnMouseEvent(const graphics::MouseEvent &mouseObject);
 
