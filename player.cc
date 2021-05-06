@@ -1,8 +1,5 @@
 #include "player.h"
 
-#include <iostream>
-#include <string>
-
 #include "cpputils/graphics/image.h"
 #include "game.h"
 #include "game_element.h"

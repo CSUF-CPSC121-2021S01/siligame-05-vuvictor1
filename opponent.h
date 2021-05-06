@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string>
-
 #ifndef OPPONENT_H
 #define OPPONENT_H
 #include "cpputils/graphics/image.h"

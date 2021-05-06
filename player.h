@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string>
-
 #include "cpputils/graphics/image.h"
 #include "game_element.h"
 
