@@ -94,18 +94,6 @@ void Game::UpdateScreen() {
   }
 }
 
-void Game::OnAnimationStep() {
-  if (brick_.size() == 0) {
-    CreateOpponents();
-  }
-  MoveGameElements();
-  LaunchProjectiles();
-  FilterIntersections();
-  RemoveInactive();
-  UpdateScreen();
-  screen_.Flush();
-}
-
 void Game::OnMouseEvent(const graphics::MouseEvent& mouseObject) {
   if (mouseObject.GetMouseAction() == graphics::MouseAction::kPressed ||
       mouseObject.GetMouseAction() == graphics::MouseAction::kDragged) {
@@ -126,31 +114,43 @@ void Game::RemoveInactive() {
   for (int i = 0; i < brick_.size(); i++) {
     if (brick_[i]->GetIsActive() == false) {
       brick_.erase(brick_.begin() + i);
-      i = i - 1;
+      i -= 1;
     }
   }
   for (int i = 0; i < brickShot_.size(); i++) {
     if (brickShot_[i]->GetIsActive() == false) {
       brickShot_.erase(brickShot_.begin() + i);
-      i = i - 1;
+      i -= 1;
     }
   }
   for (int i = 0; i < playerShot_.size(); i++) {
     if (playerShot_[i]->GetIsActive() == false) {
       playerShot_.erase(playerShot_.begin() + i);
-      i = i - 1;
+      i -= 1;
     }
   }
+}
+
+void Game::OnAnimationStep() {
+  if (brick_.size() == 0) {
+    CreateOpponents();
+  }
+  MoveGameElements();
+  LaunchProjectiles();
+  FilterIntersections();
+  RemoveInactive();
+  UpdateScreen();
+  screen_.Flush();
 }
 
 void Game::LaunchProjectiles() {
   for (int i = 0; i < brick_.size(); i++) {
     if (brick_[i]->LaunchProjectile() != nullptr) {
-      std::unique_ptr<OpponentProjectile> projectile;
-      projectile = std::make_unique<OpponentProjectile>();
-      projectile->SetX(brick_[i]->GetX());
-      projectile->SetY(brick_[i]->GetY());
-      brickShot_.push_back(std::move(projectile));
+      std::unique_ptr<OpponentProjectile> projectileLaunch;
+      projectileLaunch = std::make_unique<OpponentProjectile>();
+      projectileLaunch->SetX(brick_[i]->GetX());
+      projectileLaunch->SetY(brick_[i]->GetY());
+      brickShot_.push_back(std::move(projectileLaunch));
     }
   }
 }
