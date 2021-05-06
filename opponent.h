@@ -28,6 +28,6 @@ class Opponent : public GameElement {
   std::unique_ptr<OpponentProjectile> LaunchProjectile();
 
  private:
-  int counter_ = 0;
+  int rateCounter_ = 0;
 };
 #endif

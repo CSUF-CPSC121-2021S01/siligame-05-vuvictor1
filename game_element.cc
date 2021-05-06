@@ -1,24 +1,16 @@
 #include "game_element.h"
 
-#include <iostream>
-#include <string>
-
-#include "cpputils/graphics/image.h"
-
-bool GameElement::IntersectsWith(GameElement* game) {
-  if (GetX() > game->GetX() + game->GetWidth() ||
-      game->GetX() > GetX() + GetWidth() ||
-      GetY() > game->GetY() + game->GetHeight() ||
-      game->GetY() > GetY() + GetHeight()) {
-    return false;
-  } else {
-    return true;
-  }
+bool GameElement::IntersectsWith(GameElement *game) {
+  return !(GetX() > game->GetX() + game->GetWidth() ||
+           game->GetX() > GetX() + GetWidth() ||
+           GetY() > game->GetY() + game->GetHeight() ||
+           game->GetY() > GetY() + GetHeight());
 }
 
-bool GameElement::IsOutOfBounds(const graphics::Image& image) {
-  if (GetY() + GetHeight() > image.GetHeight() ||
-      GetX() + GetWidth() > image.GetWidth() || GetY() < 0 || GetX() < 0) {
+bool GameElement::IsOutOfBounds(const graphics::Image &check) {
+  if (GetX() < 0 || GetX() + GetWidth() > check.GetWidth()) {
+    return true;
+  } else if (GetY() < 0 || GetY() + GetHeight() > check.GetHeight()) {
     return true;
   } else {
     return false;

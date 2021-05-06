@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 
 #include "cpputils/graphics/image.h"
 
@@ -28,7 +27,7 @@ class GameElement {
   void SetIsActive(bool is_active) { is_active_ = is_active; }
 
   bool IntersectsWith(GameElement *game);
-  bool IsOutOfBounds(const graphics::Image &image);
+  bool IsOutOfBounds(const graphics::Image &check);
 
  protected:
   int x_;

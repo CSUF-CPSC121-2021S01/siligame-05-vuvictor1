@@ -1,8 +1,5 @@
 #include "opponent.h"
 
-#include <iostream>
-#include <string>
-
 #include "cpputils/graphics/image.h"
 #include "game_element.h"
 
@@ -32,6 +29,19 @@ void Opponent::Draw(graphics::Image &brick) {
   }
 }
 
+void Opponent::Move(const graphics::Image& image) {
+  SetX(GetX() + 1);
+  SetY(GetY() + 1);
+  if (IsOutOfBounds(image)) {
+    SetIsActive(false);
+  } else {
+    SetIsActive(true);
+    graphics::Image brickO_;
+    Draw(brickO_);
+  }
+}
+
+
 void OpponentProjectile::Draw(graphics::Image &brickShot) {
   graphics::Image bShot(5, 5);
 
@@ -48,36 +58,26 @@ void OpponentProjectile::Draw(graphics::Image &brickShot) {
   }
 }
 
-void Opponent::Move(const graphics::Image& image) {
-  SetX(GetX() + 1);
-  SetY(GetY() + 1);
-  if (IsOutOfBounds(image)) {
-    SetIsActive(false);
-  } else {
-    SetIsActive(true);
-    graphics::Image opponent_; //Maybe delete these two lines to make it work
-    Draw(opponent_);
-  }
-}
-
-std::unique_ptr<OpponentProjectile> Opponent::LaunchProjectile() {
-  counter_ += 1;
-  if (counter_ == 5) {
-    std::unique_ptr<OpponentProjectile> projectile;
-    projectile = std::make_unique<OpponentProjectile>();
-    counter_ = 0;
-    return projectile;
-  } else {
-    return nullptr;
-  }
-}
-
 void OpponentProjectile::Move(const graphics::Image& image) {
-  SetY(GetY() + 3);
+  SetY(GetY() + 2);
+  SetX(GetX() + 2);
   if (IsOutOfBounds(image) == true) {
     SetIsActive(false);
   } else {
-    graphics::Image o_projectile; //same here maybe delete two lines
-    Draw(o_projectile);
+    graphics::Image brickShoot;
+    Draw(brickShoot);
+  }
+}
+
+
+std::unique_ptr<OpponentProjectile> Opponent::LaunchProjectile() {
+  rateCounter_ += 1;
+  if (rateCounter_ == 10) {
+    std::unique_ptr<OpponentProjectile> shoot;
+    shoot = std::make_unique<OpponentProjectile>();
+    rateCounter_ = 0;
+    return shoot;
+  } else {
+    return nullptr;
   }
 }
