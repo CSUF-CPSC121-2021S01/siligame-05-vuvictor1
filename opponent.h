@@ -1,10 +1,11 @@
 #include <iostream>
+#include <string>
 
 #ifndef OPPONENT_H
 #define OPPONENT_H
 #include "cpputils/graphics/image.h"
 #include "game_element.h"
-#include <memory>
+
 
 class OpponentProjectile : public GameElement {
  public:
@@ -13,7 +14,7 @@ class OpponentProjectile : public GameElement {
 
   void Draw(graphics::Image &brickShot) override;
 
-  void Move(const graphics::Image &brickShot) override;
+  void Move(const graphics::Image &image) override;
 };
 
 class Opponent : public GameElement {
@@ -23,11 +24,10 @@ class Opponent : public GameElement {
 
   void Draw(graphics::Image &brick) override;
 
-  void Move(const graphics::Image &brick) override;
-
+  void Move(const graphics::Image &image) override;
   std::unique_ptr<OpponentProjectile> LaunchProjectile();
 
  private:
-  int rateCounter = 0;
+  int counter_ = 0;
 };
 #endif

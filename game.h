@@ -1,46 +1,36 @@
 #include <iostream>
 #include <vector>
-
 #include "cpputils/graphics/image.h"
 #include "cpputils/graphics/image_event.h"
 #include "game_element.h"
 #include "opponent.h"
 #include "player.h"
+using namespace std;
 
-#ifndef GAME_H
-#define GAME_H
 class Game : public graphics::AnimationEventListener,
              public graphics::MouseEventListener {
  public:
-  Game() { screen_.Initialize(800, 600); }
+  Game() : Game(800, 600) {}
   Game(int width, int height) : screen_(width, height) {}
-
-  std::vector<std::unique_ptr<Opponent>> &GetOpponents() { return brick_; }
-
-  std::vector<std::unique_ptr<OpponentProjectile>> &GetOpponentProjectiles() {
-    return brickShot_;
-  }
-
-  std::vector<std::unique_ptr<PlayerProjectile>> &GetPlayerProjectiles() { return playerShot_; }
-
-  Player &GetPlayer() { return player_; }
-
-  // Create member functions
-  graphics::Image &GetGameScreen() { return screen_; }
-
+  std::vector<std::unique_ptr<Opponent>>& GetOpponents();
+  std::vector<std::unique_ptr<OpponentProjectile>>& GetOpponentProjectiles();
+  std::vector<std::unique_ptr<PlayerProjectile>>& GetPlayerProjectiles();
+  Player& GetPlayer();
+  graphics::Image& GetGameScreen();
   void CreateOpponents();
+  void CreateOpponentProjectiles();
+  void CreatePlayerProjectiles();
   void Init();
   void UpdateScreen();
-  void Start();
   void MoveGameElements();
   void FilterIntersections();
-  void LaunchProjectiles();
   void OnAnimationStep();
+  void OnMouseEvent(const graphics::MouseEvent& mouse);
+  void Start();
+  int GetScore();
+  bool HasLost();
   void RemoveInactive();
-
-  int GetScore() {return score_; }
-  bool HasLost() { return lose_; }
-  void OnMouseEvent(const graphics::MouseEvent &mouseObject);
+  void LaunchProjectiles();
 
  private:
   graphics::Image screen_;
@@ -48,9 +38,6 @@ class Game : public graphics::AnimationEventListener,
   std::vector<std::unique_ptr<OpponentProjectile>> brickShot_;
   std::vector<std::unique_ptr<PlayerProjectile>> playerShot_;
   Player player_;
-  int width_;
-  int height_;
   int score_ = 0;
-  bool lose_;
+  bool lost_;
 };
-#endif

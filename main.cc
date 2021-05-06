@@ -1,14 +1,14 @@
 #include <iostream>
-
+#include <vector>
+#include "cpputils/graphics/image.h"
 #include "game.h"
 #include "game_element.h"
 #include "opponent.h"
 #include "player.h"
 
 int main() {
-  Game game0;
-  game0.Init();
-  game0.UpdateScreen();
-  game0.Start();
-  return 0;
+  Game my_game;
+  my_game.Init();
+  my_game.OnAnimationStep();
+  my_game.Start();
 }

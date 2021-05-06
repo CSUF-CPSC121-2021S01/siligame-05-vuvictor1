@@ -1,3 +1,6 @@
+#include <iostream>
+#include <string>
+
 #include "cpputils/graphics/image.h"
 
 #ifndef GAME_ELEMENT_H
@@ -10,13 +13,13 @@ class GameElement {
   GameElement(int x, int y, int width, int height)
       : x_(x), y_(y), width_(width), height_(height) {}
 
-  int GetX() const { return x_; }
-  int GetY() const { return y_; }
+  int GetX() { return x_; }
+  int GetY() { return y_; }
   void SetX(int x) { x_ = x; }
   void SetY(int y) { y_ = y; }
 
-  int GetWidth() const { return width_; }
-  int GetHeight() const { return height_; }
+  int GetWidth() { return width_; }
+  int GetHeight() { return height_; }
 
   virtual void Draw(graphics::Image &image) = 0;
   virtual void Move(const graphics::Image &image) = 0;
@@ -24,8 +27,8 @@ class GameElement {
   bool GetIsActive() { return is_active_; }
   void SetIsActive(bool is_active) { is_active_ = is_active; }
 
-  bool IntersectsWith(const GameElement *game);
-  bool IsOutOfBounds(const graphics::Image &check);
+  bool IntersectsWith(GameElement *game);
+  bool IsOutOfBounds(const graphics::Image &image);
 
  protected:
   int x_;
